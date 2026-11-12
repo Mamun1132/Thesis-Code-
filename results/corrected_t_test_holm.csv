@@ -1,0 +1,8 @@
+Best model,Compared with,t,p (unadjusted),p (Holm-adjusted)
+Gradient Boosting,Random Forest,0.6071,0.5495,0.5495
+Gradient Boosting,Extra Trees,2.0658,0.0498,0.0996
+Gradient Boosting,SVM,3.4071,0.0023,0.0069
+Gradient Boosting,KNN,4.5607,0.0001,0.0008
+Gradient Boosting,Logistic Regression,4.4307,0.0002,0.0009
+Gradient Boosting,Decision Tree,3.6386,0.0013,0.0052
+Gradient Boosting,Naive Bayes,4.8397,0.0001,0.0004

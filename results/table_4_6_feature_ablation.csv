@@ -1,0 +1,7 @@
+Feature set,accuracy,precision,recall,f1,roc_auc
+All 11 features,98.6450,98.0003,98.6840,98.3302,99.9370
+Without diabetes indicators,96.6549,97.1375,94.5196,95.7920,99.4827
+Without BMI and heart rate,96.3978,94.8012,96.4331,95.5823,99.4068
+Vital signs only,95.9002,96.3344,93.4163,94.8301,99.0797
+History indicators only,95.3864,94.1460,94.4824,94.2989,98.3723
+"Blood pressure, blood sugar and age",86.8431,87.7048,78.5080,82.7927,93.6106

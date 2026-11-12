@@ -1,0 +1,7 @@
+Action,Records affected,Records remaining
+Raw dataset loaded,,1205
+Rows with missing risk label removed,18.0000,1187
+Exact duplicate rows removed,18.0000,1169
+Records with age above 60 removed,3.0000,1166
+BMI of zero set to missing,1.0000,1166
+"Risk label encoded (High = 1, Low = 0)",,1166

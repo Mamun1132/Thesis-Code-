@@ -1,0 +1,12 @@
+Feature,ROC-AUC
+BMI,0.9564
+Heart Rate,0.9085
+BS,0.8746
+Preexisting Diabetes,0.8157
+Mental Health,0.8074
+Diastolic,0.7474
+Systolic BP,0.7203
+Previous Complications,0.7112
+Gestational Diabetes,0.6486
+Age,0.6153
+Body Temp,0.5747

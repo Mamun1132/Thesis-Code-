@@ -1,0 +1,2 @@
+Model,accuracy mean,accuracy SD,precision mean,precision SD,recall mean,recall SD,f1 mean,f1 SD,roc_auc mean,roc_auc SD
+Gradient Boosting,99.1319,0.5317,99.0261,0.7402,98.8542,1.1409,98.9352,0.6564,99.9585,0.0359

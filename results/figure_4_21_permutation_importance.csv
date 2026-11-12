@@ -1,0 +1,12 @@
+Feature,Mean drop in ROC-AUC,SD across folds
+Preexisting Diabetes,0.0202,0.0056
+Gestational Diabetes,0.0142,0.0038
+BMI,0.0083,0.0034
+Heart Rate,0.0027,0.0014
+Mental Health,0.0025,0.0011
+BS,0.0021,0.0009
+Previous Complications,0.0004,0.0002
+Systolic BP,0.0004,0.0003
+Age,0.0001,0.0000
+Diastolic,0.0001,0.0001
+Body Temp,0.0000,0.0000

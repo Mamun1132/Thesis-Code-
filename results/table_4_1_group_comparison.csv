@@ -1,0 +1,12 @@
+Feature,High risk,Low risk,Test,p-value,n high,n low
+Age,27 (22-35),25 (20-30),Mann-Whitney U,0.0000,471,695
+Systolic BP,120 (110-140),120 (100-120),Mann-Whitney U,0.0000,471,691
+Diastolic,90 (70-95),70 (60-80),Mann-Whitney U,0.0000,471,693
+BS,9 (7.125-11),6.6 (5-6.9),Mann-Whitney U,0.0000,470,695
+Body Temp,98 (98-98),98 (98-98),Mann-Whitney U,0.0000,471,695
+BMI,26 (24.2-29),22 (20-23),Mann-Whitney U,0.0000,464,687
+Heart Rate,80 (77-88),72 (70-76),Mann-Whitney U,0.0000,470,695
+Previous Complications,43.2%,0.9%,Chi-square,0.0000,470,695
+Preexisting Diabetes,67.0%,3.7%,Chi-square,0.0000,470,695
+Gestational Diabetes,29.7%,0.0%,Chi-square,0.0000,471,695
+Mental Health,70.7%,9.2%,Chi-square,0.0000,471,695

@@ -1,0 +1,4 @@
+Method,Accuracy,F1-score,Recall,Missed high-risk,False alarms
+Rule: pre-existing or gestational diabetes,93.5678,91.8390,89.5966,49,26
+Rule: any of the four history indicators,92.1955,91.1046,98.9384,5,86
+Rule: blood pressure >= 140/90 mmHg,71.7839,60.5042,53.5032,219,110
