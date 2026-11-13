@@ -28,7 +28,7 @@ def get_models():
         "Extra Trees": make_pipeline(ExtraTreesClassifier(n_estimators=400, random_state=SEED, n_jobs=-1), False),
         "SVM": make_pipeline(SVC(kernel="rbf", probability=True, random_state=SEED), True),
         "KNN": make_pipeline(KNeighborsClassifier(n_neighbors=7), True),
-        "Logistic Regression": make_pipeline(LogisticRegression(max_iter=5000), True),
+        "Logistic Regression": make_pipeline(LogisticRegression(max_iter=3000), True),
         "Decision Tree": make_pipeline(DecisionTreeClassifier(max_depth=6, random_state=SEED), False),
         "Naive Bayes": make_pipeline(GaussianNB(), True),
     }

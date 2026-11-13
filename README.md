@@ -4,7 +4,7 @@ Code for the final year design project (FYDP) report of **Md. Abdulla Al Mamun**
 Department of Computer Science and Engineering, Daffodil International University
 (supervisor: Ms. Shayla Sharmin, co-supervisor: Mr. Shahadat Hossain).
 
-The code reproduces every table and supporting analysis of Chapters 3 and 4 of the report from the raw
+The code reproduces the main tables and analyses of Chapters 3 and 4 of the report from the raw
 Kurigram maternal health dataset, using the leakage-controlled protocol described there:
 
 - cleaning of the 1,205 raw records (missing labels, exact duplicates, ages above 60, BMI of zero set to missing), leaving 1,166 records with 471 high-risk patients;
@@ -40,11 +40,17 @@ The full run takes about 15 minutes on a laptop CPU. All tables are written to `
 
 Results were produced with Python 3.13, scikit-learn 1.9.1, pandas 3.0.5, NumPy 2.5.3 and SciPy 1.18.1.
 
-- Cleaning, Table 4.1, the rule baselines, the feature ablation, single-feature AUC and permutation importance match the report exactly.
+- Cleaning (Table 3.3) and Table 4.1 match the report exactly.
 - Cross-validated means (Table 4.2) agree with the report within 0.2 percentage points. Gradient Boosting reaches 98.8% accuracy (SD 0.6), an F1-score of 98.5% and an ROC-AUC of 99.95%.
 - Pooled out-of-fold errors match for six of the eight models. Extra Trees has 22 errors (report: 21) and Decision Tree splits its 41 errors as 21 missed and 20 false alarms (report: 22 and 19).
-- At a threshold of 0.3, Random Forest misses no high-risk patient with 28 false alarms (report: 29).
+- The three rule baselines match exactly.
+- Random Forest thresholds (Table 4.7): at 0.3 no high-risk patient is missed with 28 false alarms (report: 29); at 0.4 there are 14 false alarms (report: 12) and at 0.2 there are 48 (report: 47).
+- Feature ablation (Table 4.6) agrees within 0.3 points; for example the last row gives 86.8% accuracy (report: 86.9%).
+- Single-feature AUC and permutation importance agree to the second decimal, with differences of 0.01 for blood sugar, age and gestational diabetes.
 - The corrected t-test gives p = 0.55 for Gradient Boosting against Random Forest (report: 0.49) and p = 0.0498 against Extra Trees (report: 0.04). Neither is significant after Holm correction, as in the report.
+- The learning curves are computed at 10 training sizes (the report figures show 8).
+
+Not included in this code: the Shapiro-Wilk, Kruskal-Wallis and Spearman tests of Section 4.1, the nested cross-validation check (99.0%) of Section 4.2 and the plotting of figures.
 
 Small differences come from library versions and from the order in which random numbers are drawn.
 
