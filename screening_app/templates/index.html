@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maternal Health Risk Screening</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main>
+  <header>
+    <h1>Maternal Health Risk Screening</h1>
+    <p class="sub">Decision support for antenatal visits. The result supports, and does not replace, clinical judgement.</p>
+  </header>
+
+  {% if result %}
+  <section class="result {{ 'high' if result.risk == 'High' else 'low' }}" aria-live="polite">
+    <div class="verdict">{{ result.risk }} risk</div>
+    {% set pct = result.probability * 100 %}
+    <div class="prob">Risk score {% if pct >= 99.5 %}&gt;99{% elif pct < 0.5 %}&lt;1{% else %}{{ '%.0f' % pct }}{% endif %} out of 100 (high risk at {{ '%.0f' % (result.threshold * 100) }} or above)</div>
+    <p class="note">The score ranks patients by risk. It is not a calibrated probability.</p>
+    {% if result.risk == 'High' %}<p>Refer for specialist review according to local protocol.</p>{% endif %}
+    {% if result.factors %}
+    <p class="ftitle">Inputs that raised the predicted risk most</p>
+    <ul>{% for f in result.factors %}<li>{{ f.feature }} (+{{ '%.0f' % (f.effect * 100) }} score points)</li>{% endfor %}</ul>
+    {% endif %}
+    {% for w in result.warnings %}<p class="warn">{{ w }}</p>{% endfor %}
+  </section>
+  {% endif %}
+
+  {% if errors %}
+  <section class="errors" role="alert">
+    <p>Please correct the highlighted fields.</p>
+  </section>
+  {% endif %}
+
+  <form method="post" novalidate>
+    <div class="grid">
+    {% for f in fields %}
+      <label class="field {{ 'bad' if f.name in errors }}">
+        <span>{{ f.label }}{% if not f.binary %} ({{ f.unit }}){% endif %}{% if f.optional %} <em>optional</em>{% endif %}</span>
+        {% if f.binary %}
+          <select name="{{ f.name }}">
+            <option value="" {{ 'selected' if values.get(f.name, '') == '' }}>Select</option>
+            <option value="0" {{ 'selected' if values.get(f.name) == '0' }}>No</option>
+            <option value="1" {{ 'selected' if values.get(f.name) == '1' }}>Yes</option>
+          </select>
+        {% else %}
+          <input type="number" step="any" inputmode="decimal" name="{{ f.name }}" value="{{ values.get(f.name, '') }}"
+                 placeholder="{{ f.min }} to {{ f.max }}">
+        {% endif %}
+        {% if f.name in errors %}<small>{{ f.label }} {{ errors[f.name] }}</small>{% endif %}
+      </label>
+    {% endfor %}
+    </div>
+    <button type="submit">Check risk</button>
+  </form>
+  <footer>Random Forest model trained on 1,166 antenatal records from Kurigram General Hospital. Not validated on other populations.</footer>
+</main>
+</body>
+</html>
