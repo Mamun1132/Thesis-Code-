@@ -54,6 +54,24 @@ Not included in this code: the Shapiro-Wilk, Kruskal-Wallis and Spearman tests o
 
 Small differences come from library versions and from the order in which random numbers are drawn.
 
+## Screening app (Section 4.4)
+
+`screening_app/` turns the final Random Forest (threshold 0.3) into a working web-based screening tool
+built with Flask. A health worker enters the 11 routine values of an antenatal visit and receives a risk
+class, a risk score and the inputs that raised the score most. The folder also contains the automated
+test suite (46 tests) and the performance benchmark reported in Tables 4.9 and 4.10.
+
+```bash
+cd screening_app
+pip install -r requirements.txt
+python train_model.py
+python app.py              # open http://127.0.0.1:5000
+python -m pytest -q        # 46 tests
+```
+
+On Windows, double-clicking `screening_app/run_app.bat` does all of the above and opens the browser.
+See `screening_app/README.md` for the API and the input rules.
+
 ## Data
 
 `data/maternal_health_risk_kurigram.csv` is the Kurigram General Hospital maternal health risk dataset of
@@ -68,4 +86,5 @@ maternal_risk/models.py  the eight fold-wise pipelines (Table 3.4)
 maternal_risk/analysis.py  all experiments of Chapter 4
 run_all.py               runs everything and writes results/
 results/                 output tables
+screening_app/           web-based screening system, tests and benchmark (Section 4.4)
 ```
