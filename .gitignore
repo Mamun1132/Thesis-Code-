@@ -3,6 +3,4 @@ __pycache__/
 .ipynb_checkpoints/
 .venv/
 .pytest_cache/
-screening_app/models/
-screening_app/logs/*
-!screening_app/logs/.gitkeep
+

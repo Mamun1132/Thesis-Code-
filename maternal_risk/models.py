@@ -32,3 +32,27 @@ def get_models():
         "Decision Tree": make_pipeline(DecisionTreeClassifier(max_depth=6, random_state=SEED), False),
         "Naive Bayes": make_pipeline(GaussianNB(), True),
     }
+
+
+def get_additional_models():
+    """The four further models of Section 4.3 (Table 4.9). Settings were fixed in advance and not tuned."""
+    from catboost import CatBoostClassifier
+    from lightgbm import LGBMClassifier
+    from sklearn.ensemble import VotingClassifier
+    from xgboost import XGBClassifier
+
+    def xgb():
+        return XGBClassifier(n_estimators=400, max_depth=4, learning_rate=0.1, subsample=0.8, colsample_bytree=0.8,
+                             eval_metric="logloss", random_state=SEED, n_jobs=-1)
+
+    return {
+        "XGBoost": make_pipeline(xgb(), False),
+        "LightGBM": make_pipeline(LGBMClassifier(n_estimators=400, num_leaves=15, learning_rate=0.05,
+                                                 min_child_samples=10, random_state=SEED, verbose=-1), False),
+        "CatBoost": make_pipeline(CatBoostClassifier(iterations=500, depth=6, learning_rate=0.05, random_seed=SEED,
+                                                     verbose=0, allow_writing_files=False), False),
+        "Soft voting (RF, ET, XGBoost)": make_pipeline(VotingClassifier(
+            [("rf", RandomForestClassifier(n_estimators=400, random_state=SEED, n_jobs=-1)),
+             ("et", ExtraTreesClassifier(n_estimators=400, random_state=SEED, n_jobs=-1)),
+             ("xgb", xgb())], voting="soft"), False),
+    }
