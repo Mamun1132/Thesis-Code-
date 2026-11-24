@@ -9,7 +9,7 @@ Kurigram maternal health dataset, using the leakage-controlled protocol describe
 
 - cleaning of the 1,205 raw records (missing labels, exact duplicates, ages above 60, BMI of zero set to missing), leaving 1,166 records with 471 high-risk patients;
 - median imputation and standard scaling fitted inside each training fold only;
-- eight classical classifiers compared with stratified five-fold cross-validation repeated five times (seed 42);
+- eight classical classifiers compared with stratified five-fold cross-validation repeated five times (seed 42), plus XGBoost, LightGBM, CatBoost and a soft-voting ensemble on the same folds (Section 4.3, Table 4.9);
 - corrected resampled t-test (variance factor 1/25 + 1/4 = 0.29, 24 degrees of freedom) with Holm correction;
 - pooled out-of-fold predictions, three clinical rule baselines, feature ablation, single-feature AUC, permutation importance, learning curves, threshold tuning, calibration and a sensitivity analysis.
 
@@ -20,7 +20,7 @@ pip install -r requirements.txt
 python run_all.py
 ```
 
-The full run takes about 15 minutes on a laptop CPU. All tables are written to `results/` as CSV files.
+The full run takes about 25 minutes on a laptop CPU. All tables are written to `results/` as CSV files.
 
 | File in `results/` | Report |
 |---|---|
@@ -33,7 +33,9 @@ The full run takes about 15 minutes on a laptop CPU. All tables are written to `
 | `table_4_6_feature_ablation.csv` | Table 4.6 |
 | `figure_4_20_single_feature_auc.csv`, `figure_4_21_permutation_importance.csv` | Figures 4.20 and 4.21 |
 | `table_4_7_threshold_random_forest.csv`, `figure_4_22_calibration_random_forest.csv` | Table 4.7, Figure 4.22 |
-| `learning_curves.csv` | Figures 4.11, 4.14 and 4.17 |
+| `learning_curves.csv` | Figures 4.11, 4.14, 4.17 and 4.23 |
+| `figure_4_24_gradient_boosting_minus_random_forest.csv` | Figure 4.24 |
+| `table_4_9_additional_models.csv`, `table_4_9_corrected_t_test_holm.csv` | Table 4.9 |
 | `sensitivity_without_ages_below_15.csv` | Section 4.3, sensitivity analysis |
 
 ## Agreement with the report
@@ -48,29 +50,12 @@ Results were produced with Python 3.13, scikit-learn 1.9.1, pandas 3.0.5, NumPy 
 - Feature ablation (Table 4.6) agrees within 0.3 points; for example the last row gives 86.8% accuracy (report: 86.9%).
 - Single-feature AUC and permutation importance agree to the second decimal, with differences of 0.01 for blood sugar, age and gestational diabetes.
 - The corrected t-test gives p = 0.55 for Gradient Boosting against Random Forest (report: 0.49) and p = 0.0498 against Extra Trees (report: 0.04). Neither is significant after Holm correction, as in the report.
-- The learning curves are computed at 10 training sizes (the report figures show 8).
+- The learning curves are computed for all eight classifiers at 10 training sizes (Figures 4.11, 4.14 and 4.17 show 8).
+- Table 4.9 and Figure 4.24 match the report exactly; Figure 4.23 comes from the same learning-curve code.
 
 Not included in this code: the Shapiro-Wilk, Kruskal-Wallis and Spearman tests of Section 4.1, the nested cross-validation check (99.0%) of Section 4.2 and the plotting of figures.
 
 Small differences come from library versions and from the order in which random numbers are drawn.
-
-## Screening app (Section 4.4)
-
-`screening_app/` turns the final Random Forest (threshold 0.3) into a working web-based screening tool
-built with Flask. A health worker enters the 11 routine values of an antenatal visit and receives a risk
-class, a risk score and the inputs that raised the score most. The folder also contains the automated
-test suite (46 tests) and the performance benchmark reported in Tables 4.9 and 4.10.
-
-```bash
-cd screening_app
-pip install -r requirements.txt
-python train_model.py
-python app.py              # open http://127.0.0.1:5000
-python -m pytest -q        # 46 tests
-```
-
-On Windows, double-clicking `screening_app/run_app.bat` does all of the above and opens the browser.
-See `screening_app/README.md` for the API and the input rules.
 
 ## Data
 
@@ -86,5 +71,4 @@ maternal_risk/models.py  the eight fold-wise pipelines (Table 3.4)
 maternal_risk/analysis.py  all experiments of Chapter 4
 run_all.py               runs everything and writes results/
 results/                 output tables
-screening_app/           web-based screening system, tests and benchmark (Section 4.4)
 ```

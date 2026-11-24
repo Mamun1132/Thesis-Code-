@@ -9,7 +9,7 @@ import pandas as pd
 
 from maternal_risk import analysis as A
 from maternal_risk.data import clean, load_raw
-from maternal_risk.models import get_models
+from maternal_risk.models import get_additional_models, get_models
 
 OUT = Path(__file__).resolve().parent / "results"
 OUT.mkdir(exist_ok=True)
@@ -60,7 +60,19 @@ def main():
     save(A.calibration(y, oof["Random Forest"]), "figure_4_22_calibration_random_forest")
     no_skill = np.mean((y - y.mean()) ** 2)
     print(f"\nBrier score of a model that always predicts the prevalence: {no_skill:.3f}")
-    save(A.learning_curves(models, X, y), "learning_curves")
+    lc_folds = A.learning_curve_folds(models, X, y)
+    save(A.learning_curves(lc_folds), "learning_curves")
+    save(A.paired_learning_difference(lc_folds), "figure_4_24_gradient_boosting_minus_random_forest")
+
+    # Section 4.3, Table 4.9: four further models on the same 25 folds, compared with Gradient Boosting
+    extra = {"Gradient Boosting": models["Gradient Boosting"], "Random Forest": models["Random Forest"],
+             **get_additional_models()}
+    extra_table, extra_folds = A.cross_validated_comparison(extra, X, y)
+    extra_oof = pd.DataFrame([{"Model": n, **A.summarize_predictions(y, A.oof_probabilities(m, X, y))}
+                              for n, m in extra.items()])
+    save(extra_table.merge(extra_oof[["Model", "Missed high-risk", "False alarms"]], on="Model"),
+         "table_4_9_additional_models")
+    save(A.significance_tests(extra_folds, "Gradient Boosting", len(y)), "table_4_9_corrected_t_test_holm")
 
     Xs, ys, _ = clean(raw, min_age=15)
     sens, _ = A.cross_validated_comparison({"Gradient Boosting": models["Gradient Boosting"]}, Xs, ys)

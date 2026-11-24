@@ -180,24 +180,42 @@ def permutation_importances(X, y):
                          "SD across folds": imp.std(axis=0, ddof=1)}).sort_values("Mean drop in ROC-AUC", ascending=False)
 
 
-def learning_curves(models, X, y, names=("Gradient Boosting", "Random Forest", "Extra Trees")):
+def learning_curve_folds(models, X, y, names=None):
+    """Per-fold training and validation accuracy at 10 training sizes (10% to 100% of each training part)."""
     rows = []
     fractions = np.linspace(0.1, 1.0, 10)
-    for name in names:
+    for name in names or list(models):
         for frac in fractions:
-            tr_acc, va_acc, sizes = [], [], []
-            for tr, te in repeated_cv().split(X, y):
+            for k, (tr, te) in enumerate(repeated_cv().split(X, y)):
                 rng = np.random.RandomState(SEED)
                 n_sub = int(round(frac * len(tr)))
                 sub = rng.choice(tr, n_sub, replace=False) if n_sub < len(tr) else tr
                 m = clone(models[name]).fit(X.iloc[sub], y[sub])
-                tr_acc.append(accuracy_score(y[sub], m.predict(X.iloc[sub])))
-                va_acc.append(accuracy_score(y[te], m.predict(X.iloc[te])))
-                sizes.append(n_sub)
-            rows.append({"Model": name, "Training patients": int(np.mean(sizes)),
-                         "Training accuracy": 100 * np.mean(tr_acc), "Validation accuracy": 100 * np.mean(va_acc),
-                         "Validation SD": 100 * np.std(va_acc, ddof=1)})
+                rows.append({"Model": name, "Fraction": round(frac, 1), "Fold": k + 1, "Training patients": n_sub,
+                             "Training accuracy": 100 * accuracy_score(y[sub], m.predict(X.iloc[sub])),
+                             "Validation accuracy": 100 * accuracy_score(y[te], m.predict(X.iloc[te]))})
     return pd.DataFrame(rows)
+
+
+def learning_curves(folds):
+    """Figures 4.11, 4.14, 4.17 and 4.23: mean over the 25 folds at each training size."""
+    g = folds.groupby(["Model", "Fraction"], sort=False)
+    return pd.DataFrame({
+        "Training patients": g["Training patients"].mean().round().astype(int),
+        "Training accuracy": g["Training accuracy"].mean(),
+        "Validation accuracy": g["Validation accuracy"].mean(),
+        "Validation SD": g["Validation accuracy"].std(ddof=1),
+    }).reset_index().drop(columns="Fraction")
+
+
+def paired_learning_difference(folds, a="Gradient Boosting", b="Random Forest"):
+    """Figure 4.24b: validation accuracy of model a minus model b in each fold, mean and SD at each training size."""
+    w = folds[folds["Model"].isin([a, b])].pivot_table(index=["Fraction", "Fold"], columns="Model",
+                                                       values="Validation accuracy")
+    d = (w[a] - w[b]).groupby(level="Fraction")
+    sizes = folds.groupby("Fraction")["Training patients"].mean().round().astype(int)
+    return pd.DataFrame({"Training patients": sizes, f"{a} minus {b} (mean)": d.mean(),
+                         "SD": d.std(ddof=1)}).reset_index(drop=True)
 
 
 def threshold_table(y, prob, thresholds=(0.5, 0.4, 0.3, 0.2)):
